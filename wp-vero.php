@@ -4,7 +4,7 @@
   Plugin URI: http://www.getvero.com
   Description: Vero: Send emails based on what your customers do. Your customers are individuals. Track what each one does and send them relevant emails like never before.
   Author: Damien Brzoska
-  Version: 1.0
+  Version: 1.0.0
   Author URI: http://www.damienrbz.com
   */
 
