@@ -12,6 +12,9 @@
     $track_pages = $_POST['wpvero_track_pages'];
     update_option('wpvero_track_pages', $track_pages);
 
+    $track_archives = $_POST['wpvero_track_archives'];
+    update_option('wpvero_track_archives', $track_archives);
+
     $track_searches = $_POST['wpvero_track_searches'];
     update_option('wpvero_track_searches', $track_searches);
     ?>
@@ -22,6 +25,7 @@
     $ignore_user = get_option('wpvero_ignore_user', 11);
     $track_posts = get_option('wpvero_track_posts', true);
     $track_pages = get_option('wpvero_track_pages', true);
+    $track_archives = get_option('wpvero_track_archives', true);
     $track_searches = get_option('wpvero_track_searches', true);
   }
 ?>
@@ -89,6 +93,18 @@
             Automatically track events when a user view a page.
             <p class="description">
               These will track a "View Home page" or "View About page".
+            </p>
+          </td>
+        </tr>
+        <tr valign="top">
+          <th>
+            <label for="wpvero_track_archives">Track archives: </label>
+          </th>
+          <td>
+            <input type="checkbox" name="wpvero_track_archives" value="1" <?php if ($track_archives) { echo 'checked="checked"'; } ?>>
+            Automatically track events when a user view a archive pages.
+            <p class="description">
+              These will track a "View Category page" or "View User page".
             </p>
           </td>
         </tr>

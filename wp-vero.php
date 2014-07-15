@@ -11,18 +11,17 @@
   class Vero {
     // Render Vero library
     public static function initialize($api_key, $ignore) {
-      if (!$api_key) return;
-      include('wpvero_snippet_library.php');
+      include('snippets/library.php');
     }
     // Render Vero identify
     public static function identify($identity) {
-      // if (!$identity) return;
-      include('wpvero_snippet_identify.php');
+      if (!$identity) return;
+      include('snippets/identify.php');
     }
     // Render Vero track
     public static function track($event, $event_data) {
       if (!$event) return;
-      include('wpvero_snippet_event.php');
+      include('snippets/event.php');
     }
   }
 
@@ -30,8 +29,6 @@
     public function __construct() {
       if (is_admin()) {
         add_action('admin_menu', array($this, 'wpvero_admin_actions'));
-        // add_action('add_meta_boxes', array($this, 'wpvero_insert_event_meta_box'));
-        // add_action('save_post', array($this, 'wpvero_save_event_meta_box'));
       } else {
 
         add_action('wp_head', array($this, 'wpvero_head'));
@@ -133,6 +130,46 @@
         }
       }
 
+      if (get_option('wpvero_track_archives', true)) {
+        // An author page
+        if (is_author()) {
+          $author = get_queried_object();
+          $track = array(
+            'event' => 'Viewed Author Page',
+            'properties' => array(
+              'author' => $author->display_name
+            )
+          );
+        }
+        // A tag page.
+        else if (is_tag()) {
+          $track = array(
+            'event' => 'Viewed Tag Page',
+            'properties' => array(
+              'tag' => single_tag_title( '', false )
+            )
+          );
+        }
+        // A category page
+        else if (is_category()) {
+          $track = array(
+            'event' => 'Viewed Category Page',
+            'properties' => array(
+              'category' => single_cat_title( '', false )
+            )
+          );
+        }
+        // A Date page
+        else if (is_date()) {
+          $track = array(
+            'event' => 'Viewed Archive Page',
+            'properties' => array(
+              'date' => get_the_date('Y-m-d h:i:s T')
+            )
+          );
+        }
+      }
+
       if (get_option('wpvero_track_searches', true)) {
         if (is_search()) {
           $track = array(
@@ -148,54 +185,6 @@
 
       return $track;
     }
-
-    // /*
-    // **
-    // */
-    // public function wpvero_insert_event_meta_box() {
-    //   $screens = array('post', 'page');
-    //   foreach ($screens as $screen) {
-    //     add_meta_box('wpvero_event', 'Vero event', 'event_meta_box_cb', $screen, 'side');
-    //   }
-    // }
-    // public function event_meta_box_cb($post) {
-    //   wp_nonce_field('wpvero_event_meta_box', 'wpvero_event_meta_box_nonce');
-    //   $value = get_post_meta($post->ID, '_wpvero_event', true);
-    //   echo '<label for="wpvero_event">';
-    //   echo 'Event to track: ';
-    //   echo '</label> ';
-    //   echo '<input type="text" id="wpvero_event" name="wpvero_event" value="' . esc_attr( $value ) . '" size="25" />';
-    // }
-    // public function wpvero_save_event_meta_box($post_id) {
-    //   if ( ! isset( $_POST['wpvero_event_meta_box_nonce'] ) ) {
-    //     return;
-    //   }
-
-    //   if ( ! wp_verify_nonce( $_POST['wpvero_event_meta_box_nonce'], 'wpvero_event_meta_box' ) ) {
-    //     return;
-    //   }
-
-    //   if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-    //     return;
-    //   }
-
-    //   if ( isset( $_POST['post_type'] ) && 'page' == $_POST['post_type'] ) {
-    //     if ( ! current_user_can( 'edit_page', $post_id ) ) {
-    //       return;
-    //     }
-    //   } else {
-    //     if ( ! current_user_can( 'edit_post', $post_id ) ) {
-    //       return;
-    //     }
-    //   }
-
-    //   if ( ! isset( $_POST['wpvero_event'] ) ) {
-    //     return;
-    //   }
-
-    //   $my_data = sanitize_text_field( $_POST['wpvero_event'] );
-    //   update_post_meta( $post_id, '_wpvero_event', $my_data );
-    // }
   }
 
   $wpVero = new WPVero();
